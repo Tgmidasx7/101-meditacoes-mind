@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornada de Desbloqueio Mental | 101 Meditações</title>
+    <meta name="description" content="Descubra o seu nível de sobrecarga mental e como reprogramar a sua mente em apenas 7 minutos por dia.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind Config for Cosmic Luxury Theme -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], },
+                    colors: {
+                        obsidian: '#0B0F19', electric: '#8A2BE2', neon: '#00F5FF', gold: '#FFD700',
+                        danger: '#FF3366', success: '#00E676', warning: '#FFEA00',
+                        glass: 'rgba(255, 255, 255, 0.03)',
+                    },
+                    backgroundImage: {
+                        'cosmic-gradient': 'radial-gradient(circle at top center, #1a153a 0%, #0B0F19 60%, #0B0F19 100%)',
+                        'neon-gradient': 'linear-gradient(to right, #00F5FF, #8A2BE2)',
+                        'fire-gradient': 'linear-gradient(to right, #FFEA00, #FF3366)',
+                        'gold-gradient': 'linear-gradient(to right, #FFD700, #FFA500)',
+                    },
+                    boxShadow: {
+                        'neon-purple': '0 0 20px rgba(138, 43, 226, 0.4)',
+                        'neon-blue': '0 0 20px rgba(0, 245, 255, 0.4)',
+                        'neon-gold': '0 0 20px rgba(255, 215, 0, 0.3)',
+                        'glass-card': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0B0F19; color: #F3F4F6; overflow-x: hidden; }
+        
+        /* Custom Scrollbar for inner elements */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #00F5FF; border-radius: 10px; }
+
+        /* Animations */
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 15px rgba(0, 245, 255, 0.4); } 50% { box-shadow: 0 0 35px rgba(0, 245, 255, 0.8); } }
+        .btn-glow { animation: pulse-glow 2.5s infinite; }
+        
+        @keyframes fillBar { 0% { width: 0%; } 100% { width: 100%; } }
+        .animate-fill { animation: fillBar 3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        
+        @keyframes growUp { 0% { height: 0%; } 100% { height: var(--target-h); } }
+        .chart-bar.animate { animation: growUp 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .text-gradient { background: var(--tw-gradient-stops); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Tabs Logic */
+        .tab-content { display: none; opacity: 0; transform: scale(0.98) translateY(20px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .tab-content.active { display: block; opacity: 1; transform: scale(1) translateY(0); }
+
+        /* Custom Range Slider */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 12px; cursor: pointer; background: rgba(255,255,255,0.05); border-radius: 10px; }
+        input[type=range]::-webkit-slider-thumb {
+            height: 36px; width: 36px; border-radius: 50%; background: #fff; cursor: pointer; -webkit-appearance: none;
+            margin-top: -12px; box-shadow: 0 0 25px rgba(255,255,255,0.6); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+        .slider-fill { position: absolute; top: 0; left: 0; height: 12px; border-radius: 10px; pointer-events: none; transition: width 0.1s, background 0.4s; }
+
+        /* Toast Notification */
+        .toast { position: fixed; bottom: 20px; left: 20px; z-index: 100; transform: translateX(-150%); opacity: 0; transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); pointer-events: none; }
+        .toast.show { transform: translateX(0); opacity: 1; }
+    </style>
+</head>
+<body class="antialiased selection:bg-neon selection:text-obsidian bg-cosmic-gradient min-h-screen flex flex-col justify-between relative">
+
+    <!-- Kinetic Canvas Particles -->
+    <canvas id="particle-canvas" class="fixed inset-0 z-0 pointer-events-auto opacity-70"></canvas>
+
+    <!-- Orbs de Fundo Animadas -->
+    <div class="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-electric rounded-full mix-blend-screen filter blur-[150px] opacity-20 pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-neon rounded-full mix-blend-screen filter blur-[150px] opacity-10 pointer-events-none z-0"></div>
+
+    <!-- Persistent Header / Logo -->
+    <header class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 glass-panel px-6 py-2 rounded-full border-white/10 shadow-glass-card pointer-events-none">
+        <i class="ph-fill ph-waves text-xl text-neon animate-pulse"></i>
+        <span class="font-black text-sm tracking-widest uppercase text-white whitespace-nowrap drop-shadow-md">101 Meditações</span>
+    </header>
+
+    <!-- Indicador de Progresso (Dots) -->
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-2.5 glass-panel px-5 py-2.5 rounded-full pointer-events-none shadow-glass-card">
+        <div class="nav-dot w-2.5 h-2.5 rounded-full bg-neon shadow-[0_0_10px_#00F5FF] transition-all duration-300"></div>
+        <div class="nav-dot w-2 h-2 rounded-full bg-white/20 transition-all duration-300 self-center"></div>
+        <div class="nav-dot w-2 h-2 rounded-full bg-white/20 transition-all duration-300 self-center"></div>
+        <div class="nav-dot w-2 h-2 rounded-full bg-white/20 transition-all duration-300 self-center"></div>
+        <div class="nav-dot w-2 h-2 rounded-full bg-white/20 transition-all duration-300 self-center"></div>
+        <div class="nav-dot w-2 h-2 rounded-full bg-white/20 transition-all duration-300 self-center"></div>
+        <div class="nav-dot w-2 h-2 rounded-full bg-white/20 transition-all duration-300 self-center"></div>
+    </div>
+
+    <main class="flex-grow flex items-center justify-center px-4 py-24 relative z-10 w-full max-w-4xl mx-auto">
+        
+        <!-- ABA 1: HOOK (Apresentação do Pack e Mockup Player) -->
+        <div id="tab-1" class="tab-content active text-center w-full">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 w-fit mx-auto shadow-glass-card mb-6 backdrop-blur-md hover:bg-white/10 transition">
+                <i class="ph-fill ph-star text-gold text-lg animate-pulse"></i>
+                <span class="text-xs font-bold text-gray-300 uppercase tracking-widest">O Melhor Pack do Brasil</span>
+            </div>
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight mb-4">
+                Apresentamos o <br class="hidden sm:block">
+                <span class="text-transparent bg-clip-text bg-neon-gradient">101 Meditações</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-400 font-light mb-8 max-w-2xl mx-auto leading-relaxed">
+                Reprograme a sua mente em apenas 7 minutos diários com o acervo definitivo de áudios guiados. Hackeie o cansaço, a ansiedade e induza o sono profundo.
+            </p>
+
+            <!-- Ícone/Mockup Player Simplificado Animado -->
+            <div class="relative w-56 h-56 mx-auto mb-10 animate-float">
+                <div class="absolute inset-0 bg-electric/20 blur-[50px] rounded-full"></div>
+                <div class="relative glass-panel p-4 rounded-full border border-white/20 shadow-neon-purple flex flex-col items-center justify-center h-full w-full bg-obsidian/80 group overflow-hidden">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-neon to-electric flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-[0_0_20px_rgba(0,245,255,0.4)] cursor-pointer">
+                        <i class="ph-fill ph-play text-2xl text-white pl-1"></i>
+                    </div>
+                    <div class="text-white font-bold text-base">Faixa 01: Foco Laser</div>
+                    <div class="text-neon text-[10px] tracking-widest uppercase mb-2">Tocando Agora</div>
+                    
+                    <!-- Animação de Ondas de Som Binaurais -->
+                    <div class="flex gap-1 h-4 items-end opacity-80">
+                        <div class="w-1 bg-white rounded-full animate-[pulse_1s_ease-in-out_infinite] h-2"></div>
+                        <div class="w-1 bg-white rounded-full animate-[pulse_1.2s_ease-in-out_infinite] h-4"></div>
+                        <div class="w-1 bg-white rounded-full animate-[pulse_0.8s_ease-in-out_infinite] h-1.5"></div>
+                        <div class="w-1 bg-white rounded-full animate-[pulse_1.5s_ease-in-out_infinite] h-3"></div>
+                        <div class="w-1 bg-white rounded-full animate-[pulse_1.1s_ease-in-out_infinite] h-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="nextTab(2)" class="w-full sm:w-auto inline-flex justify-center items-center gap-3 bg-neon text-obsidian font-black py-5 px-12 rounded-full transition-all transform hover:scale-105 hover:bg-white hover:shadow-neon-blue text-lg uppercase tracking-widest relative overflow-hidden group">
+                <span class="relative z-10 flex items-center gap-2">Iniciar Diagnóstico Gratuito <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i></span>
+            </button>
+        </div>
+
+        <!-- ABA 2: DORES (Slider Interativo) -->
+        <div id="tab-2" class="tab-content w-full">
+            <div class="glass-panel p-8 md:p-14 rounded-[2rem] border-white/10 shadow-glass-card text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
+                <h2 class="text-xs font-bold text-gray-500 tracking-widest uppercase mb-3 relative z-10">Mapeamento de Carga</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-white mb-4 relative z-10">Qual é o seu maior <span class="text-transparent bg-clip-text bg-fire-gradient">ladrão de energia?</span></h3>
+                <p class="text-gray-400 mb-14 relative z-10">Arraste o botão abaixo para indicar o seu nível atual de sobrecarga (insónia, stresse ou pensamentos acelerados).</p>
+                
+                <!-- Dynamic Slider -->
+                <div class="relative w-full max-w-xl mx-auto mb-16 pt-12 z-10">
+                    <div id="slider1-emoji" class="absolute -top-4 left-1/2 -translate-x-1/2 text-6xl transition-all transform hover:scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">😐</div>
+                    
+                    <div class="relative w-full h-3 bg-obsidian/80 rounded-full mt-8 border border-white/5">
+                        <div id="slider1-fill" class="slider-fill bg-success w-1/2 shadow-[0_0_10px_currentColor]"></div>
+                        <input type="range" id="painSlider" min="0" max="100" value="50" class="absolute top-0 left-0 w-full h-full opacity-0 z-20 cursor-pointer" oninput="updateSlider1()">
+                        <div id="slider1-thumb" class="absolute top-1/2 -translate-y-1/2 w-9 h-9 bg-white rounded-full shadow-[0_0_20px_rgba(255,255,255,0.8)] pointer-events-none z-10 flex items-center justify-center" style="left: 50%; transform: translate(-50%, -50%);">
+                            <div class="w-3 h-3 rounded-full bg-obsidian"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between mt-5 text-[10px] font-black uppercase tracking-widest">
+                        <span class="text-success">Leve (0)</span>
+                        <span id="slider1-status" class="text-warning text-sm">Moderado</span>
+                        <span class="text-danger">Exausto (100)</span>
+                    </div>
+                </div>
+
+                <button onclick="nextTab(3)" class="w-full sm:w-auto inline-flex justify-center items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold py-4 px-10 rounded-full transition-all hover:bg-white hover:text-obsidian text-sm uppercase tracking-widest relative z-10">
+                    Confirmar Nível <i class="ph-bold ph-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ABA 3: AMEAÇAS & GRÁFICOS (Efeito UAU) -->
+        <div id="tab-3" class="tab-content w-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center glass-panel p-8 md:p-12 rounded-[2rem] border-danger/30 shadow-[0_0_40px_rgba(255,51,102,0.15)] relative overflow-hidden">
+                <div class="absolute -top-32 -right-32 w-80 h-80 bg-danger/20 rounded-full blur-[100px] pointer-events-none"></div>
+                
+                <div class="relative z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-danger/20 border border-danger/30 text-danger text-xs font-bold uppercase mb-6">
+                        <i class="ph-fill ph-warning-circle"></i> O Diagnóstico Oculto
+                    </div>
+                    <h3 class="text-3xl md:text-4xl font-extrabold text-white mb-6">Você não está doente.<br>Está <span class="text-danger">Sobrecarrregado.</span></h3>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
+                        A ciência é clara: o excesso de informação e responsabilidades eleva o seu <strong class="text-white">Cortisol</strong>, bloqueando a capacidade do cérebro de focar ou relaxar naturalmente.
+                    </p>
+                    
+                    <button onclick="nextTab(4)" class="w-full sm:w-auto mt-4 inline-flex justify-center items-center gap-3 bg-danger text-white font-bold py-4 px-8 rounded-full transition-all hover:bg-red-500 hover:shadow-[0_0_25px_rgba(255,51,102,0.6)] text-sm uppercase tracking-widest transform hover:scale-105">
+                        Qual é a Solução? <i class="ph-bold ph-arrow-right"></i>
+                    </button>
+                </div>
+                
+                <!-- Animated Charts / Numbers -->
+                <div class="flex flex-col gap-6 relative z-10">
+                    <!-- Counter 1 -->
+                    <div class="bg-obsidian/80 p-6 rounded-2xl border border-white/5 shadow-glass-card">
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Nível Médio de Stresse Diário</span>
+                            <i class="ph-duotone ph-trend-up text-danger text-2xl"></i>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span id="counter-stress" class="text-5xl font-black text-danger">0</span><span class="text-xl text-danger font-bold">%</span>
+                        </div>
+                        <!-- Animated Bar -->
+                        <div class="w-full h-1.5 bg-white/10 rounded-full mt-4 overflow-hidden flex items-end">
+                            <div class="chart-bar bg-danger w-full rounded-full" style="--target-h: 100%; height: 0;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Counter 2 -->
+                    <div class="bg-obsidian/80 p-6 rounded-2xl border border-white/5 shadow-glass-card">
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Tempo perdido por falta de foco</span>
+                            <i class="ph-duotone ph-clock text-warning text-2xl"></i>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span id="counter-hours" class="text-4xl font-black text-warning">0</span><span class="text-lg text-warning font-bold">h / semana</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 4: O ARSENAL (Lista e Tipos de Meditação) -->
+        <div id="tab-4" class="tab-content w-full">
+            <div class="glass-panel p-8 md:p-12 rounded-[2rem] border-neon/40 shadow-neon-blue text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neon/15 via-obsidian/5 to-transparent pointer-events-none"></div>
+                
+                <h2 class="text-xs font-bold text-neon tracking-widest uppercase mb-4 relative z-10">Hackeando a Mente</h2>
+                <h3 class="text-3xl md:text-5xl font-extrabold text-white mb-6 relative z-10">O Seu Arsenal de <br><span class="text-neon">101 Áudios Terapêuticos</span></h3>
+                
+                <p class="text-base md:text-lg text-gray-300 max-w-2xl mx-auto mb-10 relative z-10">
+                    Esqueça a ideia de sentar no chão e entoar mantras. O <strong>101 Meditações</strong> utiliza frequências hertzianas que induzem o seu cérebro ao estado desejado. É só colocar os fones e dar o play.
+                </p>
+
+                <!-- Categorias de Áudios -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 relative z-10">
+                    <div class="bg-obsidian/60 p-5 rounded-2xl border border-white/10 hover:border-electric hover:bg-electric/10 transition group text-left">
+                        <i class="ph-fill ph-wind text-3xl text-electric mb-3 group-hover:scale-110 transition"></i>
+                        <h4 class="font-bold text-white text-sm mb-1">Ansiedade</h4>
+                        <p class="text-[10px] text-gray-400">Acalma o aperto no peito (5 min).</p>
+                    </div>
+                    <div class="bg-obsidian/60 p-5 rounded-2xl border border-white/10 hover:border-blue-400 hover:bg-blue-400/10 transition group text-left">
+                        <i class="ph-fill ph-moon-stars text-3xl text-blue-400 mb-3 group-hover:scale-110 transition"></i>
+                        <h4 class="font-bold text-white text-sm mb-1">Sono REM</h4>
+                        <p class="text-[10px] text-gray-400">Desliga a mente à noite (15 min).</p>
+                    </div>
+                    <div class="bg-obsidian/60 p-5 rounded-2xl border border-white/10 hover:border-gold hover:bg-gold/10 transition group text-left">
+                        <i class="ph-fill ph-target text-3xl text-gold mb-3 group-hover:scale-110 transition"></i>
+                        <h4 class="font-bold text-white text-sm mb-1">Foco Extremo</h4>
+                        <p class="text-[10px] text-gray-400">Ondas Beta para produtividade.</p>
+                    </div>
+                    <div class="bg-obsidian/60 p-5 rounded-2xl border border-white/10 hover:border-success hover:bg-success/10 transition group text-left">
+                        <i class="ph-fill ph-plant text-3xl text-success mb-3 group-hover:scale-110 transition"></i>
+                        <h4 class="font-bold text-white text-sm mb-1">Prosperidade</h4>
+                        <p class="text-[10px] text-gray-400">Reprogramação de crenças.</p>
+                    </div>
+                </div>
+
+                <button onclick="nextTab(5)" class="w-full sm:w-auto inline-flex justify-center items-center gap-3 bg-neon text-obsidian font-extrabold py-4 px-12 rounded-full transition-all hover:bg-white text-sm uppercase tracking-widest relative z-10 shadow-[0_0_20px_rgba(0,245,255,0.4)]">
+                    Definir o meu Objetivo <i class="ph-bold ph-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ABA 5: OBJETIVO (Slider 2) -->
+        <div id="tab-5" class="tab-content w-full">
+            <div class="glass-panel p-8 md:p-14 rounded-[2rem] border-gold/40 shadow-neon-gold text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-gold/10 rounded-full blur-[80px] pointer-events-none"></div>
+                <h2 class="text-xs font-bold text-gold tracking-widest uppercase mb-4 relative z-10">A Sua Transformação</h2>
+                <h3 class="text-3xl md:text-4xl font-black text-white mb-4 relative z-10">O que você quer resolver <span class="text-transparent bg-clip-text bg-gold-gradient">Hoje?</span></h3>
+                <p class="text-gray-400 mb-14 relative z-10">Deslize para selecionar o seu foco principal e gerar o seu protocolo personalizado.</p>
+                
+                <!-- Discrete Slider -->
+                <div class="relative w-full max-w-xl mx-auto mb-16 pt-8 z-10">
+                    <div id="goal-icon" class="absolute -top-10 left-1/2 -translate-x-1/2 text-5xl text-blue-400 transition-all filter drop-shadow-md"><i class="ph-fill ph-moon-stars"></i></div>
+                    <h4 id="goal-text" class="absolute top-6 left-1/2 -translate-x-1/2 text-2xl font-black text-white w-full transition-all tracking-tight">Dormir Profundamente</h4>
+                    
+                    <div class="relative w-full h-3 bg-obsidian/80 border border-white/5 rounded-full mt-24">
+                        <div id="slider2-fill" class="slider-fill bg-blue-400 w-0 shadow-[0_0_10px_currentColor]"></div>
+                        <input type="range" id="goalSlider" min="0" max="2" value="0" step="1" class="absolute top-0 left-0 w-full h-full opacity-0 z-20 cursor-pointer" oninput="updateSlider2()">
+                        <div id="slider2-thumb" class="absolute top-1/2 -translate-y-1/2 w-9 h-9 bg-white rounded-full shadow-[0_0_20px_rgba(255,255,255,0.8)] pointer-events-none z-10 transition-all flex items-center justify-center" style="left: 0%; transform: translate(-50%, -50%);">
+                            <div class="w-3 h-3 rounded-full bg-obsidian"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between mt-5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                        <span class="w-1/3 text-left hover:text-white transition">Sono</span>
+                        <span class="w-1/3 text-center hover:text-white transition">Foco</span>
+                        <span class="w-1/3 text-right hover:text-white transition">Paz</span>
+                    </div>
+                </div>
+
+                <button onclick="nextTab(6)" class="w-full sm:w-auto inline-flex justify-center items-center gap-3 bg-gold text-obsidian font-black py-5 px-12 rounded-full transition-all hover:scale-105 hover:bg-yellow-400 shadow-neon-gold text-base uppercase tracking-widest mt-4 relative z-10">
+                    Gerar Meu Protocolo <i class="ph-bold ph-magic-wand"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ABA 6: PROGRESSÃO (Loading & Value Stacking) -->
+        <div id="tab-6" class="tab-content w-full">
+            <!-- Tela de Carregamento Cinética -->
+            <div id="loading-view" class="text-center py-16">
+                <div class="relative w-24 h-24 mx-auto mb-8 flex items-center justify-center">
+                    <div class="absolute inset-0 border-4 border-t-neon border-r-transparent border-b-electric border-l-transparent rounded-full animate-spin"></div>
+                    <i class="ph-fill ph-brain text-4xl text-white animate-pulse"></i>
+                </div>
+                <h2 class="text-2xl font-black text-white mb-4 tracking-wide">Decodificando Respostas...</h2>
+                <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden max-w-md mx-auto relative mb-5 border border-white/10">
+                    <div id="progress-bar" class="h-full bg-neon-gradient w-0 shadow-[0_0_15px_#00F5FF]"></div>
+                </div>
+                <p id="loading-text" class="text-xs text-neon font-bold uppercase tracking-widest">A selecionar áudios binaurais...</p>
+            </div>
+
+            <!-- Value Stacking Reveal -->
+            <div id="offer-stack-view" class="hidden">
+                <div class="glass-panel p-8 md:p-12 rounded-[2rem] border-white/20 shadow-glass-card text-center relative">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-success text-obsidian px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-[0_0_15px_rgba(0,230,118,0.5)]">
+                        <i class="ph-bold ph-check"></i> Protocolo 100% Compatível
+                    </div>
+                    
+                    <h3 class="text-3xl font-extrabold text-white mt-4 mb-8">Acesso Imediato ao seu Arsenal:</h3>
+                    
+                    <div class="space-y-3 max-w-xl mx-auto mb-10 text-left">
+                        <div class="flex justify-between items-center p-4 bg-obsidian/80 rounded-xl border border-white/5 hover:border-white/20 transition group">
+                            <div class="flex items-center gap-3 text-white font-medium"><i class="ph-fill ph-headphones text-neon text-2xl group-hover:scale-110 transition"></i> Biblioteca 101 Meditações</div>
+                            <span class="text-gray-500 line-through text-xs sm:text-sm font-light">R$ 97,00</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-obsidian/80 rounded-xl border border-white/5 hover:border-white/20 transition group">
+                            <div class="flex items-center gap-3 text-white font-medium"><i class="ph-fill ph-waves text-electric text-2xl group-hover:scale-110 transition"></i> Frequências Binaurais Premium</div>
+                            <span class="text-gray-500 line-through text-xs sm:text-sm font-light">R$ 47,00</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-obsidian/80 rounded-xl border border-white/5 hover:border-white/20 transition group">
+                            <div class="flex items-center gap-3 text-white font-medium"><i class="ph-fill ph-book-open text-gold text-2xl group-hover:scale-110 transition"></i> Bónus: Audiobooks de Mindset</div>
+                            <span class="text-gray-500 line-through text-xs sm:text-sm font-light">R$ 67,00</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-5 bg-gradient-to-r from-white/10 to-transparent rounded-xl border-l-4 border-danger mt-6">
+                            <div class="font-black text-white text-lg tracking-wide">Valor Real Completo:</div>
+                            <span class="text-danger font-black text-xl line-through">R$ 211,00</span>
+                        </div>
+                    </div>
+
+                    <button onclick="nextTab(7)" class="w-full sm:w-auto inline-flex justify-center items-center gap-3 bg-white text-obsidian font-black py-5 px-12 rounded-full transition-all transform hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] text-lg uppercase tracking-widest btn-glow">
+                        Desbloquear Meu Desconto <i class="ph-bold ph-lock-key-open"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 7: AÇÃO FINAL (Mockup Completo e Checkout) -->
+        <div id="tab-7" class="tab-content w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                
+                <!-- Mockup Interativo e Detalhado (Player + Lista) -->
+                <div class="relative w-full max-w-sm mx-auto animate-float z-10">
+                    <div class="absolute inset-0 bg-neon/20 blur-[80px] rounded-full"></div>
+                    
+                    <div class="relative bg-[#1A1A24] p-2 rounded-[2.5rem] border-[6px] border-obsidian shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col h-[650px]">
+                        <!-- Tela do celular -->
+                        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-obsidian rounded-b-3xl z-30"></div> <!-- Notch -->
+                        
+                        <div class="relative z-10 flex flex-col h-full bg-obsidian rounded-[2rem] pt-10 px-4 pb-4 overflow-hidden">
+                            <!-- Cabeçalho App -->
+                            <div class="flex justify-between items-center mb-6 px-2 text-white">
+                                <i class="ph-bold ph-caret-down text-xl opacity-60"></i>
+                                <span class="text-[10px] font-black tracking-widest text-gold uppercase">Player Oficial</span>
+                                <i class="ph-bold ph-dots-three text-xl opacity-60"></i>
+                            </div>
+                            
+                            <!-- Capa / Botão ON -->
+                            <div class="w-full aspect-square rounded-[1.5rem] bg-gradient-to-br from-electric/40 to-neon/20 mb-6 flex flex-col items-center justify-center border border-white/10 shadow-[0_0_30px_rgba(0,245,255,0.15)] relative group overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-30" alt="Background Abs">
+                                
+                                <a href="https://pay.kiwify.com.br/Zfyn2Er" class="flex items-center gap-2 bg-neon backdrop-blur-md px-6 py-3 rounded-full cursor-pointer hover:bg-white transition-all text-obsidian z-10 shadow-[0_0_25px_rgba(0,245,255,0.7)] transform hover:scale-110">
+                                    <i class="ph-bold ph-power text-xl"></i>
+                                    <span class="text-xs font-black tracking-widest uppercase">Power ON</span>
+                                </a>
+                            </div>
+
+                            <!-- Info Faixa -->
+                            <h3 class="text-2xl font-bold mb-1 text-white text-center">Protocolo Diário</h3>
+                            <p class="text-[11px] text-neon mb-5 text-center uppercase tracking-widest font-semibold">Tecnologia Binaural</p>
+                            
+                            <!-- Barra de Progresso do Player -->
+                            <div class="w-full bg-white/10 h-1.5 rounded-full mb-2">
+                                <div class="bg-neon w-1/3 h-full rounded-full relative shadow-[0_0_10px_#00F5FF]"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] text-gray-500 mb-6 font-medium px-1"><span>02:14</span><span>07:00</span></div>
+                            
+                            <!-- Playlist (Lista de Meditações) -->
+                            <div class="flex-grow bg-white/5 rounded-2xl p-3 overflow-y-auto custom-scrollbar border border-white/5 flex flex-col gap-2">
+                                <h4 class="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1 px-1">Próximos Áudios</h4>
+                                
+                                <div class="flex items-center gap-3 p-2 bg-white/10 rounded-xl cursor-pointer">
+                                    <div class="w-8 h-8 rounded-lg bg-electric/20 flex items-center justify-center text-electric"><i class="ph-fill ph-waves"></i></div>
+                                    <div class="flex-grow">
+                                        <div class="text-xs text-white font-bold">01. Reset Matinal</div>
+                                        <div class="text-[9px] text-gray-400">7 Minutos</div>
+                                    </div>
+                                    <i class="ph-fill ph-play-circle text-neon text-lg"></i>
+                                </div>
+                                
+                                <div class="flex items-center gap-3 p-2 hover:bg-white/5 rounded-xl transition cursor-pointer">
+                                    <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-400"><i class="ph-fill ph-moon-stars"></i></div>
+                                    <div class="flex-grow">
+                                        <div class="text-xs text-gray-300 font-bold">24. SOS Ansiedade</div>
+                                        <div class="text-[9px] text-gray-500">5 Minutos</div>
+                                    </div>
+                                    <i class="ph-bold ph-lock-key text-gray-600"></i>
+                                </div>
+
+                                <div class="flex items-center gap-3 p-2 hover:bg-white/5 rounded-xl transition cursor-pointer">
+                                    <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-400"><i class="ph-fill ph-target"></i></div>
+                                    <div class="flex-grow">
+                                        <div class="text-xs text-gray-300 font-bold">55. Foco Laser</div>
+                                        <div class="text-[9px] text-gray-500">12 Minutos</div>
+                                    </div>
+                                    <i class="ph-bold ph-lock-key text-gray-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Oferta Final Copy -->
+                <div class="flex flex-col text-left relative z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold/20 text-gold text-xs font-bold uppercase mb-4 w-fit border border-gold/30 backdrop-blur-md">
+                        <i class="ph-fill ph-star"></i> Seu Acesso Liberado
+                    </div>
+                    <h3 class="text-4xl md:text-5xl font-black text-white mb-6 leading-tight tracking-tight">
+                        A Paz de Espírito <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon to-white">custa menos que um café.</span>
+                    </h3>
+                    
+                    <div class="glass-panel p-8 rounded-3xl border-2 border-neon/50 relative overflow-hidden bg-obsidian/90 shadow-neon-blue mb-8">
+                        <div class="absolute top-0 right-0 bg-neon text-obsidian text-[10px] font-black px-6 py-1 transform rotate-45 translate-x-[30%] translate-y-4 tracking-widest uppercase">VITALÍCIO</div>
+                        
+                        <p class="text-red-400 line-through text-sm mb-1 font-medium">De: R$ 211,00</p>
+                        <p class="text-gray-300 text-sm font-medium mb-2 uppercase tracking-wide">Hoje, você leva tudo por apenas:</p>
+                        <div class="text-6xl md:text-7xl font-black text-white drop-shadow-[0_0_15px_rgba(0,245,255,0.3)] my-2">
+                            <span class="text-3xl align-top text-neon">R$</span>47<span class="text-3xl text-neon">,00</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mt-3 font-light">Sem mensalidades. <strong class="text-neon font-medium">Acesso Vitalício.</strong></p>
+
+                        <a href="https://pay.kiwify.com.br/Zfyn2Er" class="mt-8 flex w-full justify-center items-center text-center bg-neon hover:bg-white text-obsidian font-black py-5 rounded-full transition-all transform hover:scale-105 uppercase tracking-widest text-lg shadow-[0_0_30px_rgba(0,245,255,0.6)] group">
+                            Quero Começar Agora <i class="ph-bold ph-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+
+                    <!-- Garantia e Segurança -->
+                    <div class="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
+                        <i class="ph-fill ph-shield-check text-4xl text-success"></i>
+                        <div>
+                            <p class="text-white font-bold text-sm tracking-wide">Risco Zero - 7 Dias de Garantia</p>
+                            <p class="text-gray-400 text-[11px] mt-1 leading-relaxed">Aperte o play. Se a sua mente não se acalmar logo na primeira sessão, devolvemos 100% do seu investimento no mesmo dia.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Social Proof Notification (Toast) -->
+    <div id="social-toast" class="toast glass-panel p-3 sm:p-4 rounded-2xl border-white/10 shadow-neon-blue flex items-center gap-3 bg-obsidian/95 max-w-xs w-full">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-electric to-neon flex items-center justify-center text-white shrink-0">
+            <i class="ph-fill ph-shopping-cart text-lg"></i>
+        </div>
+        <div class="flex-grow">
+            <p id="toast-name" class="text-sm font-black text-white leading-tight">Nome da Pessoa</p>
+            <p id="toast-action" class="text-[11px] sm:text-xs text-neon font-bold mt-0.5 tracking-wide">Acabou de comprar</p>
+            <p id="toast-time" class="text-[9px] text-gray-500 mt-1 uppercase tracking-widest">Agora mesmo</p>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="py-6 text-center text-gray-600 text-[10px] border-t border-white/5 z-10 w-full relative">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-2">
+            <p>© 2026 101 Meditações. Todos os direitos reservados.</p>
+            <div class="flex items-center gap-3 text-gray-500">
+                <i class="ph-fill ph-lock-key"></i> Compra Segura via Kiwify
+            </div>
+            <p>Este site não é afiliado ao Facebook Inc.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT: Logic, Animations, Particles & Interactivity -->
+    <script>
+        // --- Tab Navigation System ---
+        function nextTab(stepIndex) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            
+            const target = document.getElementById(`tab-${stepIndex}`);
+            target.classList.add('active');
+            
+            // Progress Dots
+            document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+                if(index < stepIndex) {
+                    dot.classList.add('bg-neon', 'shadow-[0_0_10px_#00F5FF]', 'w-2.5', 'h-2.5');
+                    dot.classList.remove('bg-white/20', 'w-2', 'h-2');
+                } else {
+                    dot.classList.remove('bg-neon', 'shadow-[0_0_10px_#00F5FF]', 'w-2.5', 'h-2.5');
+                    dot.classList.add('bg-white/20', 'w-2', 'h-2');
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Trigger Specific Tab Events
+            if(stepIndex === 3) startCounters();
+            if(stepIndex === 6) runLoadingSequence();
+            
+            // Kinetic Effect: Burst particles on next tab
+            burstParticles();
+        }
+
+        // --- Animations: Counters (Tab 3) ---
+        let countersRan = false;
+        function animateValue(id, start, end, duration, isPercent = false) {
+            if (start === end) return;
+            var range = end - start;
+            var current = start;
+            var increment = end > start ? 1 : -1;
+            var stepTime = Math.abs(Math.floor(duration / range));
+            var obj = document.getElementById(id);
+            var timer = setInterval(function() {
+                current += increment;
+                obj.innerHTML = current;
+                if (current == end) clearInterval(timer);
+            }, stepTime);
+        }
+
+        function startCounters() {
+            if(countersRan) return;
+            countersRan = true;
+            // Delay slighty so the tab shows first
+            setTimeout(() => {
+                animateValue("counter-stress", 0, 87, 1500); // 87% Stress
+                animateValue("counter-hours", 0, 14, 1500); // 14 hours lost
+                
+                // Trigger CSS bar animation
+                const bars = document.querySelectorAll('.chart-bar');
+                bars.forEach(bar => {
+                    bar.style.height = "0"; // reset
+                    void bar.offsetWidth; // reflow
+                    bar.classList.add('animate');
+                });
+            }, 300);
+        }
+
+        // --- Slider 1: Dores (Pain Slider) ---
+        function updateSlider1() {
+            const slider = document.getElementById('painSlider');
+            const fill = document.getElementById('slider1-fill');
+            const thumb = document.getElementById('slider1-thumb');
+            const emoji = document.getElementById('slider1-emoji');
+            const status = document.getElementById('slider1-status');
+            const val = slider.value;
+            
+            fill.style.width = `${val}%`;
+            thumb.style.left = `${val}%`;
+            
+            if (val < 33) {
+                fill.style.backgroundColor = '#00E676'; // Success
+                thumb.style.boxShadow = '0 0 25px rgba(0,230,118,0.8)';
+                emoji.innerText = '😌';
+                status.innerText = 'Leve';
+                status.style.color = '#00E676';
+            } else if (val < 66) {
+                fill.style.backgroundColor = '#FFEA00'; // Warning
+                thumb.style.boxShadow = '0 0 25px rgba(255,234,0,0.8)';
+                emoji.innerText = '😟';
+                status.innerText = 'Sobrecarga';
+                status.style.color = '#FFEA00';
+            } else {
+                fill.style.backgroundColor = '#FF3366'; // Danger
+                thumb.style.boxShadow = '0 0 25px rgba(255,51,102,0.8)';
+                emoji.innerText = '🤯';
+                status.innerText = 'Exausto';
+                status.style.color = '#FF3366';
+            }
+        }
+        updateSlider1();
+
+        // --- Slider 2: Objetivos (Future/Goal Slider) ---
+        function updateSlider2() {
+            const slider = document.getElementById('goalSlider');
+            const fill = document.getElementById('slider2-fill');
+            const thumb = document.getElementById('slider2-thumb');
+            const icon = document.getElementById('goal-icon');
+            const text = document.getElementById('goal-text');
+            const val = slider.value;
+
+            const percent = (val / 2) * 100;
+            fill.style.width = `${percent}%`;
+            thumb.style.left = `${percent}%`;
+
+            if (val == 0) {
+                fill.style.backgroundColor = '#60A5FA'; 
+                thumb.style.boxShadow = '0 0 25px rgba(96,165,250,0.8)';
+                icon.innerHTML = '<i class="ph-fill ph-moon-stars"></i>';
+                icon.style.color = '#60A5FA';
+                text.innerText = 'Dormir Profundamente';
+            } else if (val == 1) {
+                fill.style.backgroundColor = '#FFD700'; 
+                thumb.style.boxShadow = '0 0 25px rgba(255,215,0,0.8)';
+                icon.innerHTML = '<i class="ph-fill ph-target"></i>';
+                icon.style.color = '#FFD700';
+                text.innerText = 'Foco Laser';
+            } else {
+                fill.style.backgroundColor = '#00E676'; 
+                thumb.style.boxShadow = '0 0 25px rgba(0,230,118,0.8)';
+                icon.innerHTML = '<i class="ph-fill ph-plant"></i>';
+                icon.style.color = '#00E676';
+                text.innerText = 'Paz Interior';
+            }
+        }
+        updateSlider2();
+
+        // --- Fake Loading Sequence (Tab 6) ---
+        function runLoadingSequence() {
+            const progressBar = document.getElementById('progress-bar');
+            const textEl = document.getElementById('loading-text');
+            const loadingView = document.getElementById('loading-view');
+            const offerView = document.getElementById('offer-stack-view');
+            
+            loadingView.classList.remove('hidden');
+            offerView.classList.add('hidden');
+            
+            progressBar.classList.remove('animate-fill');
+            void progressBar.offsetWidth; // reflow
+            progressBar.classList.add('animate-fill');
+
+            const texts = ["A pesquisar o banco de áudios...", "A alinhar frequências 432Hz...", "A gerar passe vitalício..."];
+            let i = 0;
+            
+            const textInterval = setInterval(() => {
+                if(i < texts.length) { textEl.innerText = texts[i]; i++; }
+            }, 900);
+
+            setTimeout(() => {
+                clearInterval(textInterval);
+                loadingView.classList.add('hidden');
+                offerView.classList.remove('hidden');
+                
+                offerView.style.opacity = 0;
+                offerView.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    offerView.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    offerView.style.opacity = 1;
+                    offerView.style.transform = 'scale(1)';
+                    burstParticles(50); // Big burst on reveal
+                }, 50);
+
+            }, 3500);
+        }
+
+        // --- Social Proof Popups (Toast) ---
+        const names = ["João S.", "Maria P.", "Carlos F.", "Ana C.", "Pedro H.", "Lucas M.", "Juliana T.", "Rafaela V.", "Marcelo D.", "Bruna K."];
+        const actions = [
+            "garantiu o acesso vitalício", "acabou de comprar o 101 Meditações", 
+            "desbloqueou o protocolo de ansiedade", "levou o pack + bónus"
+        ];
+        
+        function showRandomToast() {
+            const toast = document.getElementById('social-toast');
+            document.getElementById('toast-name').innerText = names[Math.floor(Math.random() * names.length)];
+            document.getElementById('toast-action').innerText = actions[Math.floor(Math.random() * actions.length)];
+            
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 5000);
+        }
+
+        // Init Toast Loop
+        setTimeout(function toastLoop() {
+            showRandomToast();
+            setTimeout(toastLoop, Math.floor(Math.random() * 12000) + 8000); // 8-20s interval
+        }, 4000);
+
+        // --- KINETIC PARTICLE SYSTEM (Interactive Background) ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+        
+        // Mouse interaction data
+        let mouse = { x: null, y: null, radius: 120 };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        // Touch support for mobile
+        window.addEventListener('touchmove', (e) => {
+            mouse.x = e.touches[0].clientX;
+            mouse.y = e.touches[0].clientY;
+        });
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        });
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.density = (Math.random() * 30) + 1;
+                this.color = Math.random() > 0.5 ? 'rgba(0, 245, 255, 0.6)' : 'rgba(138, 43, 226, 0.6)';
+                // Slow drift
+                this.vx = Math.random() * 0.4 - 0.2;
+                this.vy = Math.random() * -0.4 - 0.1;
+            }
+            update() {
+                // Default slow drift
+                this.baseX += this.vx;
+                this.baseY += this.vy;
+
+                // Wrap edges
+                if (this.baseY < 0) this.baseY = canvas.height;
+                if (this.baseX < 0) this.baseX = canvas.width;
+                if (this.baseX > canvas.width) this.baseX = 0;
+
+                // Kinetic Interaction
+                if(mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    let forceDirectionX = dx / distance;
+                    let forceDirectionY = dy / distance;
+                    let maxDistance = mouse.radius;
+                    let force = (maxDistance - distance) / maxDistance;
+                    let directionX = forceDirectionX * force * this.density;
+                    let directionY = forceDirectionY * force * this.density;
+
+                    if (distance < maxDistance) {
+                        this.x -= directionX;
+                        this.y -= directionY;
+                    } else {
+                        // Return to base position smoothly
+                        if (this.x !== this.baseX) {
+                            let dx = this.x - this.baseX;
+                            this.x -= dx / 20;
+                        }
+                        if (this.y !== this.baseY) {
+                            let dy = this.y - this.baseY;
+                            this.y -= dy / 20;
+                        }
+                    }
+                } else {
+                    this.x = this.baseX;
+                    this.y = this.baseY;
+                }
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            let density = window.innerWidth < 768 ? 12000 : 7000; // Less dense on mobile
+            let numberOfParticles = Math.floor((canvas.width * canvas.height) / density);
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        // Burst function for tab transitions
+        function burstParticles(amount = 20) {
+            for(let i=0; i<amount; i++) {
+                let p = new Particle();
+                p.x = canvas.width/2;
+                p.y = canvas.height/2;
+                p.vx = (Math.random() - 0.5) * 10;
+                p.vy = (Math.random() - 0.5) * 10;
+                p.size = Math.random() * 3 + 1;
+                particlesArray.push(p);
+                // Remove the extra particles after a while to keep memory clean
+                setTimeout(() => { particlesArray.pop(); }, 2000);
+            }
+        }
+
+        // Start kinetic background
+        initParticles();
+        animateParticles();
+        
+        // Reset mouse pos periodically so particles return to normal if mouse leaves window
+        setInterval(() => { mouse.x = null; mouse.y = null; }, 3000);
+    </script>
+</body>
+</html>
